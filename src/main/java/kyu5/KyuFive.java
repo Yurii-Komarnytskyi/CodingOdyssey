@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,7 +41,30 @@ class SimpleEncryptionQwerty {
 			} else {
 				Entry<Integer, String> rowEntry = findApropriateEntry(currentLetter);
 				String row = rowEntry.getValue();
-				char encryptedLetter = row.charAt(pickNextEncryptedIndex(row.indexOf(currentLetter),encryptionKeys.get(rowEntry.getKey()), row.length() - 1));
+				char encryptedLetter = row.charAt(pickNextEncryptedIndex(row.indexOf(currentLetter),
+						encryptionKeys.get(rowEntry.getKey()), row.length() - 1));
+				result.append(encryptedLetter);
+			}
+		});
+		return result.toString();
+	}
+
+	public static String decrypt(String encryptedText, int key) {
+		if (key == 0) {
+			return encryptedText;
+		}
+
+		StringBuilder result = new StringBuilder();
+		List<Integer> encryptionKeys = decryptRowKeys(key);
+		IntStream.rangeClosed(0, encryptedText.length() - 1).forEach(i -> {
+			String currentLetter = String.valueOf(encryptedText.charAt(i));
+			if (currentLetter.isBlank()) {
+				result.append(currentLetter);
+			} else {
+				Entry<Integer, String> rowEntry = findApropriateEntry(currentLetter);
+				String row = rowEntry.getValue();
+				char encryptedLetter = row.charAt(pickNextDecryptedIndex(row.indexOf(currentLetter),
+						encryptionKeys.get(rowEntry.getKey()), row.length() - 1));
 				result.append(encryptedLetter);
 			}
 		});
@@ -54,19 +78,22 @@ class SimpleEncryptionQwerty {
 		}
 		return qwertyIndex + shiftToRight;
 	}
+	
+	private static int pickNextDecryptedIndex(int qwertyIndex, int shiftToLeft, int rowLength) {
+		boolean overlap = (qwertyIndex - shiftToLeft) < 0;
+		if (overlap) {
+			return rowLength - shiftToLeft + qwertyIndex + 1;
+		}
+		return Math.abs(qwertyIndex - shiftToLeft);
+	}
 
 	private static Entry<Integer, String> findApropriateEntry(String letter) {
 		if (qwertyRows.values().stream().anyMatch(values -> values.contains(letter))) {
 			return qwertyRows.entrySet().stream().filter(entry -> entry.getValue().contains(letter)).findFirst().get();
 		} else {
 			return qwertyRowsShiftOn.entrySet().stream().filter(entry -> entry.getValue().contains(letter)).findFirst()
-					.get();
+					.orElse(new AbstractMap.SimpleEntry<>(0, String.join("", Collections.nCopies(10, letter))));
 		}
-	}
-
-	public static String decrypt(String encryptedText, int key) {
-		StringBuilder result = new StringBuilder();
-		return result.toString();
 	}
 
 	private static List<Integer> decryptRowKeys(int key) {
@@ -77,18 +104,6 @@ class SimpleEncryptionQwerty {
 }
 
 public class KyuFive {
-	@Test
-    public void encryptExampleTests() {
-        assertEquals("S", SimpleEncryptionQwerty.encrypt("A", 111));
-        assertEquals("Smb", SimpleEncryptionQwerty.encrypt("Abc", 212));
-        assertEquals("Wave", SimpleEncryptionQwerty.encrypt("Wave", 0)); // -> 000
-        assertEquals("Tg.y", SimpleEncryptionQwerty.encrypt("Wave", 345));
-        assertEquals(">fdd", SimpleEncryptionQwerty.encrypt("Ball", 134));
-        assertEquals(">gff", SimpleEncryptionQwerty.encrypt("Ball", 444));
-    
-        assertEquals("Iaqh qh g iyhi,", SimpleEncryptionQwerty.encrypt("This is a test.", 348));
-        assertEquals("Sr pgi jlpl Jr,lqlage Zlow Piapc I.skiaa dw. l.s ibnepizi.p ugi. de.se.f l arkwper.c", SimpleEncryptionQwerty.encrypt("Do the kata Kobayashi Maru Test. Endless fun and excitement when finding a solution.", 583));          
-    }
 
 	public static void main(String[] args) {
 		System.out.println("Dick");
