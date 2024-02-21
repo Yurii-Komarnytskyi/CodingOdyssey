@@ -1,7 +1,5 @@
 package kyu6;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Queue;
@@ -22,8 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import org.junit.Test;
 
 class TenMinWalk {
 //	https://www.codewars.com/kata/54da539698b8a2ad76000228/train/java
@@ -598,10 +595,166 @@ class Kata8 {
 	}
 }
 
+class Multiplication {
+	// https://www.codewars.com/kata/534d2f5b5371ecf8d2000a08/train/java
+	public static int[][] multiplicationTable(int n) {
+		int[][] result = new int[n][n];
+		IntStream.range(0, n).forEach(firstLevelIndex -> {
+			int firstLevelIncrement = firstLevelIndex + 1;
+			IntStream.range(0, n).forEach(secondLevelIndex -> {
+				int secondLevelIncrement = (secondLevelIndex + 1) * firstLevelIncrement;
+				result[firstLevelIndex][secondLevelIndex] += secondLevelIncrement;
+			});
+		});
+
+		return result;
+	}
+}
+
+class StockList {
+	// https://www.codewars.com/kata/54dc6class%20StockList%20%7B%20//%201st%20parameter%20is%20the%20stocklist%20(L%20in%20example),%20//%202nd%20parameter%20is%20list%20of%20categories%20(M%20in%20example)%20public%20static%20String%20stockSummary(String[]%20lstOfArt,%20String[]%20lstOf1stLetter)%20%7B%20//%20your%20code%20here%20return%20...%20%7D%20%7D
+
+	public static String stockSummary(String[] stocklist, String[] categories) {
+		if (stocklist.length == 0 || categories.length == 0) {
+			return "";
+		}
+		return Arrays.stream(categories).map(cathegory -> {
+			long booksCount = Arrays.stream(stocklist).filter(code -> code.charAt(0) == cathegory.charAt(0))
+					.mapToLong(StockList::getCountOfBooksFromCode).sum();
+			return prettifyStrIntPair(cathegory, booksCount);
+		}).collect(Collectors.joining(" - "));
+	}
+
+	private static String prettifyStrIntPair(String s, long i) {
+		return String.format("(%s : %d)", s, i);
+	}
+
+	private static long getCountOfBooksFromCode(String code) {
+		return Arrays.stream(code.split(" ")).filter(s -> (int) s.charAt(0) >= 48 && (int) s.charAt(0) <= 57)
+				.mapToInt(Integer::valueOf).sum();
+	}
+}
+
+class SumParts {
+	// https://www.codewars.com/kata/5ce399e0047a45001c853c2b/train/java
+
+	public static int[] sumParts(int[] arr) {
+		int[] result = new int[arr.length + 1];
+		int posytion = arr.length - 1;
+		int sum = 0;
+		for (int i = result.length - 1; i >= 0; i--) {
+			result[i] = sum;
+			if (posytion >= 0) {
+				sum = sum + arr[posytion];
+				posytion--;
+			}
+		}
+		return result;
+	}
+}
+
+class DataReverse {
+	// https://www.codewars.com/kata/569d488d61b812a0f7000015/train/java
+	public static int[] dataReversed(int[] data) {
+		List<int[]> result = new ArrayList<>();
+		for (int i = data.length; i > 0; i -= 8) {
+			result.add(Arrays.copyOfRange(data, i - 8, i));
+		}
+		return result.stream().flatMapToInt(arr -> Arrays.stream(arr)).toArray();
+	}
+}
+
+class Meeting {
+	// https://www.codewars.com/kata/59df2f8f08c6cec835000012/train/java
+	private static final String DELIMITER = ";";
+	private static final String NAMES_DELIMITER = ":";
+
+	public static String meeting(String friendsInvited) {
+		return Arrays.stream(friendsInvited.split(DELIMITER)).map(guest -> {
+			String[] personInfo = guest.split(NAMES_DELIMITER);
+			return new Guest(personInfo[0], personInfo[1]);
+		}).sorted(Guest::compareTo).map(Guest::toString).collect(Collectors.joining());
+	}
+
+	static class Guest implements Comparable<Guest> {
+		private String name;
+		private String surname;
+
+		public String getName() {
+			return name.toLowerCase();
+		}
+
+		public String getSurname() {
+			return surname.toLowerCase();
+		}
+
+		Guest(String name, String surname) {
+			this.name = name;
+			this.surname = surname;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("(%s, %s)", surname, name).toUpperCase();
+		}
+
+		@Override
+		public int compareTo(Guest o) {
+			Comparator<Guest> compareByNames = Comparator.comparing(Guest::getName);
+			Comparator<Guest> compareBySurnames = Comparator.comparing(Guest::getSurname);
+			return (Objects.compare(this, o, compareBySurnames) == 0) ? Objects.compare(this, o, compareByNames)
+					: Objects.compare(this, o, compareBySurnames);
+		}
+	}
+}
+
+class ConsonantValue {
+	// https://www.codewars.com/kata/59c633e7dcc4053512000073/train/java
+
+	public static int solve(final String word) {
+		String[] consonantsSplitted = word.replaceAll("[aieoue]", ";").split(";");
+		return Arrays.stream(consonantsSplitted).filter(s -> !s.isBlank()).mapToInt(ConsonantValue::countLetters).max()
+				.orElse(0);
+	}
+
+	private static int countLetters(String str) {
+		return Arrays.stream(str.split("")).mapToInt(s -> (int) s.charAt(0) - 96).sum();
+	}
+}
+
+class BackspacesInString {
+	// https://www.codewars.com/kata/5727bb0fe81185ae62000ae3/train/java
+
+	private static final String BACKSPACE = "#";
+
+	public String cleanString(String text) {
+		long amountOfBackspaces = Arrays.stream(text.split("")).filter(s -> s.equals(BACKSPACE)).count();
+		if(text.isEmpty() || text.isBlank()) {
+			return "";
+		}
+		if ( amountOfBackspaces == 0) {
+			return text;
+		}
+		StringBuilder result = new StringBuilder(text);
+		while (result.indexOf(BACKSPACE) != -1) {
+			int currentBackspaceIndex = result.indexOf(BACKSPACE);
+			if (currentBackspaceIndex > 0 && (currentBackspaceIndex + 1) <= text.length() - 1) {
+				result.delete(currentBackspaceIndex - 1, currentBackspaceIndex+1); 
+
+			} else {
+				result.deleteCharAt(currentBackspaceIndex);
+			}
+		}
+		return result.toString();
+	}
+	
+}
+
 public class KyuSix {
 
 	public static void main(String[] args) {
 		KyuSix kyuSix = new KyuSix();
 
 	}
+	
 }
