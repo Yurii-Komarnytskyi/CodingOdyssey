@@ -1,9 +1,13 @@
 package kyu6;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -21,6 +25,8 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import org.junit.Test;
 
 class TenMinWalk {
 //	https://www.codewars.com/kata/54da539698b8a2ad76000228/train/java
@@ -729,17 +735,17 @@ class BackspacesInString {
 
 	public String cleanString(String text) {
 		long amountOfBackspaces = Arrays.stream(text.split("")).filter(s -> s.equals(BACKSPACE)).count();
-		if(text.isEmpty() || text.isBlank()) {
+		if (text.isEmpty() || text.isBlank()) {
 			return "";
 		}
-		if ( amountOfBackspaces == 0) {
+		if (amountOfBackspaces == 0) {
 			return text;
 		}
 		StringBuilder result = new StringBuilder(text);
 		while (result.indexOf(BACKSPACE) != -1) {
 			int currentBackspaceIndex = result.indexOf(BACKSPACE);
 			if (currentBackspaceIndex > 0 && (currentBackspaceIndex + 1) <= text.length() - 1) {
-				result.delete(currentBackspaceIndex - 1, currentBackspaceIndex+1); 
+				result.delete(currentBackspaceIndex - 1, currentBackspaceIndex + 1);
 
 			} else {
 				result.deleteCharAt(currentBackspaceIndex);
@@ -747,14 +753,69 @@ class BackspacesInString {
 		}
 		return result.toString();
 	}
-	
+
+}
+
+class ArrayFolder {
+	// https://www.codewars.com/kata/57ea70aa5500adfe8a000110/train/java
+
+	public static int[] foldArray(int[] array, int foldNTimes) {
+		List<Integer> result = Arrays.stream(array).boxed().collect(Collectors.toList());
+
+		for (int i = 0; i < foldNTimes; i++) {
+			result = foldSingleTime(result);
+		}
+
+		return result.stream().mapToInt(Integer::intValue).toArray();
+	}
+
+	private static List<Integer> foldSingleTime(List<Integer> beingFolded) {
+		int theMiddle = (beingFolded.size() % 2 == 0) ? beingFolded.size() / 2 : (beingFolded.size() / 2) + 1;
+		Deque<Integer> secondHalf = new ArrayDeque<>(beingFolded.subList(theMiddle, beingFolded.size()));
+		if (beingFolded.size() % 2 == 0) {
+			return beingFolded.stream().limit(theMiddle).map(item -> item += secondHalf.pollLast())
+					.collect(Collectors.toList());
+		} else {
+			return beingFolded.stream().limit(theMiddle)
+					.map(item -> item += Optional.ofNullable(secondHalf.pollLast()).orElse(0))
+					.collect(Collectors.toList());
+		}
+	}
+}
+
+class DashatizeIt {
+	// https://www.codewars.com/kata/58223370aef9fc03fd000071/train/java
+	private static final String DASH_SIGN = "-";
+	private static final String DOUBLE_DASH_SIGN = "--";
+
+	public static String dashatize(int num) {
+		String numToString = String.valueOf(num);
+		String rawResult = Stream.of(numToString.split(""))
+				.filter(str -> Character.isDigit(str.charAt(0)))
+				.map(str -> (Integer.valueOf(str) % 2 == 0) ? str : (new StringBuilder(str)).insert(0, DASH_SIGN).append(DASH_SIGN) )
+				.collect(Collectors.joining());
+		return trimDashes(rawResult).replaceAll(DOUBLE_DASH_SIGN, DASH_SIGN);
+				
+	}
+
+	private static String trimDashes(String str) {
+		StringBuilder result = new StringBuilder(str);
+		if(str.startsWith(DASH_SIGN)) {
+			result.delete(0, 1);
+		}
+		if (str.endsWith(DASH_SIGN)) {
+			result.delete(result.length()-1, result.length());
+		}
+		return result.toString();
+	}
 }
 
 public class KyuSix {
-
+	
 	public static void main(String[] args) {
+		int t = Integer.MIN_VALUE;
 		KyuSix kyuSix = new KyuSix();
 
 	}
-	
+
 }
