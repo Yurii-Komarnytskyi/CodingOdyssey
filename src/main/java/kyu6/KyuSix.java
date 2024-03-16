@@ -1,7 +1,6 @@
 package kyu6;
 
-import static org.junit.Assert.assertEquals;
-
+import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,12 +20,12 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import org.junit.Test;
 
 class TenMinWalk {
 //	https://www.codewars.com/kata/54da539698b8a2ad76000228/train/java
@@ -790,32 +789,155 @@ class DashatizeIt {
 
 	public static String dashatize(int num) {
 		String numToString = String.valueOf(num);
-		String rawResult = Stream.of(numToString.split(""))
-				.filter(str -> Character.isDigit(str.charAt(0)))
-				.map(str -> (Integer.valueOf(str) % 2 == 0) ? str : (new StringBuilder(str)).insert(0, DASH_SIGN).append(DASH_SIGN) )
+		String rawResult = Stream.of(numToString.split("")).filter(str -> Character.isDigit(str.charAt(0)))
+				.map(str -> (Integer.valueOf(str) % 2 == 0) ? str
+						: (new StringBuilder(str)).insert(0, DASH_SIGN).append(DASH_SIGN))
 				.collect(Collectors.joining());
 		return trimDashes(rawResult).replaceAll(DOUBLE_DASH_SIGN, DASH_SIGN);
-				
+
 	}
 
 	private static String trimDashes(String str) {
 		StringBuilder result = new StringBuilder(str);
-		if(str.startsWith(DASH_SIGN)) {
+		if (str.startsWith(DASH_SIGN)) {
 			result.delete(0, 1);
 		}
 		if (str.endsWith(DASH_SIGN)) {
-			result.delete(result.length()-1, result.length());
+			result.delete(result.length() - 1, result.length());
 		}
 		return result.toString();
 	}
 }
 
+class Abbreviator {
+	// https://www.codewars.com/kata/5375f921003bf62192000746/train/java
+
+	static public String abbreviate(String string) {
+		String[] words = string.split("[^a-zA-Z]+");
+		String[] separators = string.split("[a-zA-Z]+");
+		StringBuilder result = new StringBuilder();
+		System.out.println(Arrays.toString(separators));
+		
+		int i = 1;
+		for (String word : words) {
+			result.append(abbreviateSingleWord(word));
+			if(i < separators.length) {
+				result.append(separators[i++]);
+			}
+		}
+		return result.toString();
+	}
+	
+	private static String abbreviateSingleWord(String word) {
+		if (word.length() < 4) {
+			return word;
+		}
+		return (new StringBuilder(word)).delete(1, word.length() - 1).insert(1, word.length() - 2)
+				.toString();
+	}
+	    
+}
+
+class Keypad {
+	// https://www.codewars.com/kata/54a2e93b22d236498400134b/train/java
+	
+	private static List<String> buttons = List.of("1", "ABC2", "DEF3", "GHI4", "JKL5", "MNO6", "PQRS7", "TUV8", "WXYZ9", "*", " 0", "#");
+	
+	public static int presses(String phrase) {
+		return Arrays.stream(phrase.split("")).mapToInt(character -> Keypad.convertToMultiTap(character.toUpperCase())).sum();
+	}
+
+	private static int convertToMultiTap(String character) {
+		Optional<String> button = buttons.stream().filter(str -> str.contains(character)).findFirst();
+		return (button.isPresent())?  button.get().indexOf(character) + 1: 0;
+	}
+}
+
+class Statistics {
+    // https://www.codewars.com/kata/55b3425df71c1201a800009c/train/java 
+	
+	public static String stat(String str) {
+		if (str.isEmpty()) {
+			return str;
+		}
+		List<Integer> raceResultsInSeconds = Arrays.stream(str.split(","))
+				.mapToInt(Statistics::convertStringIntoSeconds).boxed().toList();
+
+		String avarage = convertSecondsIntoResult(
+				(int) raceResultsInSeconds.stream().mapToInt(Integer::intValue).average().getAsDouble());
+		String range = convertSecondsIntoResult(
+				raceResultsInSeconds.stream().mapToInt(Integer::intValue).max().getAsInt()
+						- raceResultsInSeconds.stream().mapToInt(Integer::intValue).min().getAsInt());
+		return String.format("Range: %s Average: %s Median: %s", range, avarage, getMedian(raceResultsInSeconds));
+	}
+
+	private static String getMedian(List<Integer> raceResults) {
+		List<Integer> sorted = raceResults.stream().sorted().toList();
+		if (raceResults.size() % 2 != 0) {
+			return convertSecondsIntoResult(sorted.get((int) Math.ceil((double) (sorted.size() - 1) / 2)));
+		}
+		Integer median = (sorted.get((sorted.size() / 2) - 1) + sorted.get(sorted.size() / 2)) / 2;
+		return convertSecondsIntoResult(median);
+	}
+
+	private static int convertStringIntoSeconds(String str) {
+		List<String> strSeparated = Arrays.stream(str.split("\\|")).map(s -> s.trim()).toList();
+		return (Integer.parseInt(strSeparated.get(0)) * 3600) + (Integer.parseInt(strSeparated.get(1)) * 60)
+				+ Integer.parseInt(strSeparated.get(2));
+	}
+
+	private static String convertSecondsIntoResult(int seconds) {
+		Duration duration = Duration.ofSeconds(seconds);
+		Long hours = duration.toHours();
+		Long minutes = duration.minusHours(duration.toHours()).toMinutes();
+		Long secondsLeft = duration.minusMinutes(duration.toMinutes()).toSeconds();
+		return String.format("%s|%s|%s", ((hours <= 9) ? "0" + hours : hours),
+				((minutes <= 9) ? "0" + minutes : minutes), ((secondsLeft <= 9) ? "0" + secondsLeft : secondsLeft));
+	}
+}
+
+class CharacterWithLongestConsecutiveRepetition {
+	// https://www.codewars.com/kata/586d6cefbcc21eed7a001155/train/java
+	
+    public static Object[] longestRepetition(String str) {
+    	Object[] result = {"", 0};
+    	if(str.isEmpty()) {
+    		return result;
+    	}
+    	Matcher matcher = Pattern.compile("(.)\\1*").matcher(str);
+    	while (matcher.find()) {
+			if(matcher.group().length() > (int) result[1]) {
+				result[0] = String.valueOf( matcher.group().charAt(0));
+				result[1] = matcher.group().length();
+			}
+		}
+    	return result;
+    }
+}
+
+class NewCashierDoesNotKnowAboutSpaceOrShift {
+	// https://www.codewars.com/kata/5d23d89906f92a00267bb83d/train/java
+	
+	private static List<String> menu = List.of("Burger", "Fries", "Chicken", "Pizza", "Sandwich", "Onionrings", "Milkshake", "Coke" );	
+	
+    public static String getOrder(String order) {
+    	List<String> orderItemsPresentInMenu = new ArrayList<>(menu.stream().filter(menuItem -> order.contains(menuItem.toLowerCase())).toList());
+    	return orderItemsPresentInMenu.stream().map(item -> {
+    		int qtyOfItemInTheOrder = ( order.length() - Arrays.stream(order.split(item.toLowerCase())).collect(Collectors.joining()).length()) / item.length();
+    		return (qtyOfItemInTheOrder == 1)? item : Collections.nCopies(qtyOfItemInTheOrder, item).stream().collect(Collectors.joining(" ")).trim();
+    	}).collect(Collectors.joining(" "));
+    }
+}
+
+
+
+
 public class KyuSix {
 	
 	public static void main(String[] args) {
-		int t = Integer.MIN_VALUE;
 		KyuSix kyuSix = new KyuSix();
-
+		System.out.println(NewCashierDoesNotKnowAboutSpaceOrShift.getOrder("milkshakepizzachickenfriescokeburgerpizzasandwichmilkshakepizza"));
+		
 	}
 
 }
