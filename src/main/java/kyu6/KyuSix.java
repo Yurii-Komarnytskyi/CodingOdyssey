@@ -1,5 +1,7 @@
 package kyu6;
 
+import static org.junit.Assert.assertEquals;
+
 import java.time.Duration;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import org.junit.Test;
 
 class TenMinWalk {
 //	https://www.codewars.com/kata/54da539698b8a2ad76000228/train/java
@@ -817,45 +821,46 @@ class Abbreviator {
 		String[] separators = string.split("[a-zA-Z]+");
 		StringBuilder result = new StringBuilder();
 		System.out.println(Arrays.toString(separators));
-		
+
 		int i = 1;
 		for (String word : words) {
 			result.append(abbreviateSingleWord(word));
-			if(i < separators.length) {
+			if (i < separators.length) {
 				result.append(separators[i++]);
 			}
 		}
 		return result.toString();
 	}
-	
+
 	private static String abbreviateSingleWord(String word) {
 		if (word.length() < 4) {
 			return word;
 		}
-		return (new StringBuilder(word)).delete(1, word.length() - 1).insert(1, word.length() - 2)
-				.toString();
+		return (new StringBuilder(word)).delete(1, word.length() - 1).insert(1, word.length() - 2).toString();
 	}
-	    
+
 }
 
 class Keypad {
 	// https://www.codewars.com/kata/54a2e93b22d236498400134b/train/java
-	
-	private static List<String> buttons = List.of("1", "ABC2", "DEF3", "GHI4", "JKL5", "MNO6", "PQRS7", "TUV8", "WXYZ9", "*", " 0", "#");
-	
+
+	private static List<String> buttons = List.of("1", "ABC2", "DEF3", "GHI4", "JKL5", "MNO6", "PQRS7", "TUV8", "WXYZ9",
+			"*", " 0", "#");
+
 	public static int presses(String phrase) {
-		return Arrays.stream(phrase.split("")).mapToInt(character -> Keypad.convertToMultiTap(character.toUpperCase())).sum();
+		return Arrays.stream(phrase.split("")).mapToInt(character -> Keypad.convertToMultiTap(character.toUpperCase()))
+				.sum();
 	}
 
 	private static int convertToMultiTap(String character) {
 		Optional<String> button = buttons.stream().filter(str -> str.contains(character)).findFirst();
-		return (button.isPresent())?  button.get().indexOf(character) + 1: 0;
+		return (button.isPresent()) ? button.get().indexOf(character) + 1 : 0;
 	}
 }
 
 class Statistics {
-    // https://www.codewars.com/kata/55b3425df71c1201a800009c/train/java 
-	
+	// https://www.codewars.com/kata/55b3425df71c1201a800009c/train/java
+
 	public static String stat(String str) {
 		if (str.isEmpty()) {
 			return str;
@@ -898,46 +903,107 @@ class Statistics {
 
 class CharacterWithLongestConsecutiveRepetition {
 	// https://www.codewars.com/kata/586d6cefbcc21eed7a001155/train/java
-	
-    public static Object[] longestRepetition(String str) {
-    	Object[] result = {"", 0};
-    	if(str.isEmpty()) {
-    		return result;
-    	}
-    	Matcher matcher = Pattern.compile("(.)\\1*").matcher(str);
-    	while (matcher.find()) {
-			if(matcher.group().length() > (int) result[1]) {
-				result[0] = String.valueOf( matcher.group().charAt(0));
+
+	public static Object[] longestRepetition(String str) {
+		Object[] result = { "", 0 };
+		if (str.isEmpty()) {
+			return result;
+		}
+		Matcher matcher = Pattern.compile("(.)\\1*").matcher(str);
+		while (matcher.find()) {
+			if (matcher.group().length() > (int) result[1]) {
+				result[0] = String.valueOf(matcher.group().charAt(0));
 				result[1] = matcher.group().length();
 			}
 		}
-    	return result;
-    }
+		return result;
+	}
 }
 
 class NewCashierDoesNotKnowAboutSpaceOrShift {
 	// https://www.codewars.com/kata/5d23d89906f92a00267bb83d/train/java
-	
-	private static List<String> menu = List.of("Burger", "Fries", "Chicken", "Pizza", "Sandwich", "Onionrings", "Milkshake", "Coke" );	
-	
-    public static String getOrder(String order) {
-    	List<String> orderItemsPresentInMenu = new ArrayList<>(menu.stream().filter(menuItem -> order.contains(menuItem.toLowerCase())).toList());
-    	return orderItemsPresentInMenu.stream().map(item -> {
-    		int qtyOfItemInTheOrder = ( order.length() - Arrays.stream(order.split(item.toLowerCase())).collect(Collectors.joining()).length()) / item.length();
-    		return (qtyOfItemInTheOrder == 1)? item : Collections.nCopies(qtyOfItemInTheOrder, item).stream().collect(Collectors.joining(" ")).trim();
-    	}).collect(Collectors.joining(" "));
-    }
+
+	private static List<String> menu = List.of("Burger", "Fries", "Chicken", "Pizza", "Sandwich", "Onionrings",
+			"Milkshake", "Coke");
+
+	public static String getOrder(String order) {
+		List<String> orderItemsPresentInMenu = new ArrayList<>(
+				menu.stream().filter(menuItem -> order.contains(menuItem.toLowerCase())).toList());
+		return orderItemsPresentInMenu.stream().map(item -> {
+			int qtyOfItemInTheOrder = (order.length()
+					- Arrays.stream(order.split(item.toLowerCase())).collect(Collectors.joining()).length())
+					/ item.length();
+			return (qtyOfItemInTheOrder == 1) ? item
+					: Collections.nCopies(qtyOfItemInTheOrder, item).stream().collect(Collectors.joining(" ")).trim();
+		}).collect(Collectors.joining(" "));
+	}
 }
 
+class MazeRunner {
+	// https://www.codewars.com/kata/58663693b359c4a6560001d6/train/java
 
+	private static final Integer WALL = 1;
+	private static final Integer START_POINT = 2;
+	private static final Integer FINISH_POINT = 3;
 
+	private enum GameOutcomes {
+		Finish, Dead, Lost
+	}
+
+	private static class PositionOf {
+		private static List<List<Integer>> entireMaze;
+		private static List<Integer> mazeRow;
+		private static Integer mazeIndex;
+		private static Integer mazeRowIndex;
+	}
+
+	public static String walk(int[][] maze, String[] directions) {
+		MazeRunner.PositionOf.entireMaze = Arrays.stream(maze).map(array -> Arrays.stream(array).boxed().toList())
+				.collect(Collectors.toList());
+		MazeRunner.PositionOf.mazeRow = MazeRunner.PositionOf.entireMaze.stream()
+				.filter(list -> list.contains(START_POINT)).findFirst().get();
+		MazeRunner.PositionOf.mazeIndex = MazeRunner.PositionOf.mazeRow.indexOf(START_POINT);
+		MazeRunner.PositionOf.mazeRowIndex = MazeRunner.PositionOf.entireMaze.indexOf(MazeRunner.PositionOf.mazeRow);
+		String result = GameOutcomes.Lost.toString();
+
+		for (String direction : directions) {
+			Integer moveResult = makeMove(direction);
+			if (moveResult == WALL) {
+				result = GameOutcomes.Dead.toString();
+				break;
+			} else if (moveResult == FINISH_POINT) {
+				result = GameOutcomes.Finish.toString();
+				break;
+			}
+		}
+		return result;
+	}
+
+	private static Integer makeMove(String direction) {
+		try {
+			if (direction == "N") {
+				MazeRunner.PositionOf.mazeRow = MazeRunner.PositionOf.entireMaze
+						.get(--MazeRunner.PositionOf.mazeRowIndex);
+				return MazeRunner.PositionOf.mazeRow.get(MazeRunner.PositionOf.mazeIndex);
+			} else if (direction == "S") {
+				MazeRunner.PositionOf.mazeRow = MazeRunner.PositionOf.entireMaze
+						.get(++MazeRunner.PositionOf.mazeRowIndex);
+				return MazeRunner.PositionOf.mazeRow.get(MazeRunner.PositionOf.mazeIndex);
+			} else if (direction == "W") {
+				return MazeRunner.PositionOf.mazeRow.get(--MazeRunner.PositionOf.mazeIndex);
+			} else { // E case
+				return MazeRunner.PositionOf.mazeRow.get(++MazeRunner.PositionOf.mazeIndex);
+			}
+		} catch (Exception e) {
+			return WALL;
+		}
+	}
+}
 
 public class KyuSix {
-	
+
 	public static void main(String[] args) {
 		KyuSix kyuSix = new KyuSix();
-		System.out.println(NewCashierDoesNotKnowAboutSpaceOrShift.getOrder("milkshakepizzachickenfriescokeburgerpizzasandwichmilkshakepizza"));
-		
 	}
 
 }
