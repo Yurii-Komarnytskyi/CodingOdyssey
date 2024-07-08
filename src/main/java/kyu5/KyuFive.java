@@ -379,7 +379,6 @@ class Connect4 {
 	}
 }
 
-
 public class KyuFive {
 
 	public static void main(String[] args) {
