@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class WeightSort {
+	// https://www.codewars.com/kata/55c6126177c9441a570000cc
+	
 	private static ToIntFunction<String> measureNumberWeightFunction = (str) -> Stream.of(str.split("")).mapToInt(Integer::valueOf).sum();
 	private static int compareAlphabetically(String strA, String strB) {
 		if (strA.isEmpty() || strA.isBlank()) {
