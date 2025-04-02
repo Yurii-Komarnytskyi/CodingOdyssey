@@ -60,40 +60,32 @@ public class Brainfuck {
 
 	private void executeInstruction(char instruction) {
 		switch (instruction) {
-		case INCREMENT_DATA_POINTER:
+		case INCREMENT_DATA_POINTER -> {
 			dataPointer++;
-			break;
-		case DECREMENT_DATA_POINTER:
+		}
+		case DECREMENT_DATA_POINTER -> {
 			dataPointer--;
-			break;
-		case INCREMENT_VAL_AT_DATA_POINTER:
+		}
+		case INCREMENT_VAL_AT_DATA_POINTER -> {
 			memoryTape[dataPointer] = (memoryTape[dataPointer] == MAX_VAL_IN_MEMORY_TAPE) ? MIN_VAL_IN_MEMORY_TAPE
 					: ++memoryTape[dataPointer];
-			break;
-		case DECREMENT_VAL_AT_DATA_POINTER:
+		}
+		case DECREMENT_VAL_AT_DATA_POINTER -> {
 			memoryTape[dataPointer] = (memoryTape[dataPointer] == MIN_VAL_IN_MEMORY_TAPE) ? MAX_VAL_IN_MEMORY_TAPE
 					: --memoryTape[dataPointer];
-			break;
-		case OUTPUT_VAL_AT_DATA_POINTER:
+		}
+		case OUTPUT_VAL_AT_DATA_POINTER -> {
 			output.append((char) memoryTape[dataPointer]);
-			break;
-		case ACCEPT_VAL_AT_DATA_POINTER:
+		}
+		case ACCEPT_VAL_AT_DATA_POINTER -> {
 			memoryTape[dataPointer] = (short) inputAsCharArray[inputIndex];
 			inputIndex++;
-			break;
-		case ZERO_JUMP_FORWARD_TO_NEXT_CLOSING_BRACE:
-			if (memoryTape[dataPointer] == 0) {
-				instructionIndex = openCloseBracketMatches[instructionIndex];
-			}
-			break;
-		case NON_ZERO_JUMP_BACKWARD_TO_PREVIOUS_OPENING_BRACE:
-			if (memoryTape[dataPointer] != 0) {
-				instructionIndex = openCloseBracketMatches[instructionIndex];
-			}
-			break;
-		default:
-			break;
 		}
+		case ZERO_JUMP_FORWARD_TO_NEXT_CLOSING_BRACE, NON_ZERO_JUMP_BACKWARD_TO_PREVIOUS_OPENING_BRACE -> {
+			instructionIndex = openCloseBracketMatches[instructionIndex];
+		}
+		}
+
 	}
 
 	private void initializeBracketMatches(String input) {
@@ -107,7 +99,7 @@ public class Brainfuck {
 				int openIndex = deck.pop();
 				openCloseBracketMatches[openIndex] = i;
 				openCloseBracketMatches[i] = openIndex;
-			}	
+			}
 		}
 	}
 }
