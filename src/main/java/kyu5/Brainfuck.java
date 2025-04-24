@@ -81,9 +81,17 @@ public class Brainfuck {
 			memoryTape[dataPointer] = (short) inputAsCharArray[inputIndex];
 			inputIndex++;
 		}
-		case ZERO_JUMP_FORWARD_TO_NEXT_CLOSING_BRACE, NON_ZERO_JUMP_BACKWARD_TO_PREVIOUS_OPENING_BRACE -> {
-			instructionIndex = openCloseBracketMatches[instructionIndex];
+		case ZERO_JUMP_FORWARD_TO_NEXT_CLOSING_BRACE -> {
+			if (memoryTape[dataPointer] == 0) {
+				instructionIndex = openCloseBracketMatches[instructionIndex];
+			}
 		}
+		case NON_ZERO_JUMP_BACKWARD_TO_PREVIOUS_OPENING_BRACE -> {
+			if (memoryTape[dataPointer] != 0) {
+				instructionIndex = openCloseBracketMatches[instructionIndex];
+			}
+		}
+
 		}
 
 	}
