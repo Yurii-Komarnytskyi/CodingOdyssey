@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import codewars.kyu5.WeightSort;
+
 class WeightSortTest {
 	@Test
 	void BasicTests() {

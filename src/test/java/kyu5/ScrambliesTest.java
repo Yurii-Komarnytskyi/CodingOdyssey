@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
+import codewars.kyu5.Scramblies;
+
 class ScrambliesTest {
 
 	private static void testing(boolean actual, boolean expected) {

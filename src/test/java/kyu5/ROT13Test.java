@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import codewars.kyu5.ROT13;
+
 @DisplayName("Sample Tests")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ROT13Test {
