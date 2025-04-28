@@ -1,6 +1,7 @@
 package neetcode.blind75;
 
 public class TwoSum {
+	// https://neetcode.io/problems/two-integer-sum
 	public int[] twoSum(int[] nums, int target) {
 		int[] indicesOfTwoSum = new int[2];
 		for(int i = 0; i <= nums.length-1; i++) {
