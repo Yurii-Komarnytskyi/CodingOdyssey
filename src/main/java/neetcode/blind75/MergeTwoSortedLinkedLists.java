@@ -20,8 +20,8 @@ public class MergeTwoSortedLinkedLists {
 		ListNode mergedHead = sortedNodes.get(0);
 		ListNode nextNode = mergedHead;
 		
-		for (Iterator iterator = sortedNodes.iterator(); iterator.hasNext();) {
-			nextNode = nextNode.next = ((ListNode) iterator.next()) ;
+		for (Iterator<ListNode> iterator = sortedNodes.iterator(); iterator.hasNext();) {
+			nextNode = nextNode.next = iterator.next() ;
 		}
 		
 		return mergedHead;
