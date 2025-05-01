@@ -1,26 +1,23 @@
 package neetcode.blind75;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class LinkedListCycleDetection {
-
+	// https://neetcode.io/problems/linked-list-cycle-detection
 	public boolean hasCycle(ListNode head) {
 		boolean result = false;
 
 		if(head == null || head.next == null) {
 			return result;			
 		} else {
-			Set<ListNode> priorNodes = new HashSet<>();
-			ListNode nextNode = head;
-
-			while (nextNode != null) {
-				priorNodes.add(nextNode);
-				if(nextNode.next != null && priorNodes.contains(nextNode.next)) {
+			ListNode slowPointer = head;
+			ListNode fastPointer = head.next;
+			while (slowPointer != null && fastPointer != null && fastPointer.next != null) {
+				if(fastPointer.next == slowPointer) {
 					result = true;
 					break;
 				}
-				nextNode = nextNode.next;
+				slowPointer = slowPointer.next;
+				fastPointer = fastPointer.next.next;
+				
 			}
 			return result;
 		}
