@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class MaximumDepthOfBinaryTree {
 	// https://neetcode.io/problems/depth-of-binary-tree
+
 	public int maxDepth(TreeNode root) {
 		return findMaxDepthRecursively(root);
 	}
