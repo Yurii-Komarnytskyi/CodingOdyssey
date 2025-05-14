@@ -1,4 +1,4 @@
-package neetcode.blind75;
+package neetcode.blind75.easy;
 
 public class ReverseLinkedList {
 	// https://neetcode.io/problems/reverse-a-linked-list

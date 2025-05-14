@@ -1,4 +1,4 @@
-package neetcode.blind75;
+package neetcode.blind75.easy;
 
 public class TwoSum {
 	// https://neetcode.io/problems/two-integer-sum

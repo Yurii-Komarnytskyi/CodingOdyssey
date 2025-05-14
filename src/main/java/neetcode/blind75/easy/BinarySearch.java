@@ -1,4 +1,4 @@
-package neetcode.blind75;
+package neetcode.blind75.easy;
 
 public class BinarySearch {
 	// https://neetcode.io/problems/binary-search

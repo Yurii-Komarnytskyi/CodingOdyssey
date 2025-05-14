@@ -1,4 +1,4 @@
-package neetcode.blind75;
+package neetcode.blind75.easy;
 
 import java.util.HashSet;
 import java.util.Set;

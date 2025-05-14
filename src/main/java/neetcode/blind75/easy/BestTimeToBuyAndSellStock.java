@@ -1,4 +1,4 @@
-package neetcode.blind75;
+package neetcode.blind75.easy;
 
 public class BestTimeToBuyAndSellStock {
 	// https://neetcode.io/problems/buy-and-sell-crypto
