@@ -1,5 +1,8 @@
 package codingbat.string3;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 public class StringThree {
 
 	public int countYZ(String str) {
@@ -77,26 +80,19 @@ public class StringThree {
 	}
 
 	public int countTriple(String str) {
-		if (str.length() < 3) {
-			return 0;
-		}
-		int tripleCount = 0;
-		final String PADDING_SIGN = "<>";
-		String[] lettersWithPadding = str.trim().concat(PADDING_SIGN).split("");
-		StringBuilder currentTriple = new StringBuilder();
-		for (int i = 0; i <= str.length(); i++) {
-			String currentLetter = lettersWithPadding[i];
-			if (currentLetter.equals(lettersWithPadding[i + 1]) || currentTriple.indexOf(currentLetter) != -1) {
-				currentTriple.append(currentLetter);
-			} else {
-				if (currentTriple.length() >= 3) {
-					tripleCount += (currentTriple.length() == 3) ? 1 : currentTriple.length() - 2;
+		int count = 0;
+		if(str.length() > 3) {
+			int tripleIndex = 0;
+			StringBuilder builder = new StringBuilder(str);
+			for (var s : new HashSet<>(Arrays.asList(str.split("")))) {
+			while((tripleIndex = builder.indexOf(s.repeat(3))) != -1) {
+					builder.deleteCharAt(tripleIndex);
+					count++;
 				}
-				currentTriple = new StringBuilder();
+				builder = new StringBuilder(str);
 			}
-
-		}
-		return tripleCount;
+		} 
+		return count;
 	}
 
 	public int sumDigits(String str) {
