@@ -81,17 +81,17 @@ public class StringThree {
 
 	public int countTriple(String str) {
 		int count = 0;
-		if(str.length() > 3) {
+		if (str.length() > 3) {
 			int tripleIndex = 0;
 			StringBuilder builder = new StringBuilder(str);
 			for (var s : new HashSet<>(Arrays.asList(str.split("")))) {
-			while((tripleIndex = builder.indexOf(s.repeat(3))) != -1) {
+				while ((tripleIndex = builder.indexOf(s.repeat(3))) != -1) {
 					builder.deleteCharAt(tripleIndex);
 					count++;
 				}
 				builder = new StringBuilder(str);
 			}
-		} 
+		}
 		return count;
 	}
 
@@ -107,26 +107,15 @@ public class StringThree {
 	}
 
 	public String sameEnds(String string) {
-		if (string.length() < 2) {
-			return "";
-		}
-		StringBuilder result = new StringBuilder();
-		int stringLengthDividedByTwo = string.length() / 2;
-		String leftSideSubstring = string.substring(0, stringLengthDividedByTwo);
-		String rightSideSubstring = (string.length() % 2 == 0) ? string.substring(stringLengthDividedByTwo)
-				: string.substring(stringLengthDividedByTwo + 1);
-		for (int i = 0; i <= leftSideSubstring.length() - 1; i++) {
-			result.append(leftSideSubstring.charAt(i));
-			boolean hasReachedRightSubstringEnd = rightSideSubstring.endsWith(result.toString()) && result.length() > 1;
-			if (hasReachedRightSubstringEnd) {
-				break;
-			}
-			if (rightSideSubstring.indexOf(result.toString()) == -1) {
-				result.delete(0, result.length());
-				break;
+		StringBuilder builder = new StringBuilder();
+		for(int i = 0; i < (string.length() / 2); i++ ) {
+			String substr = string.substring(0, i + 1);
+			if (string.endsWith(substr)) {
+				builder.setLength(0);
+				builder.append(substr);
 			}
 		}
-		return result.toString();
+		return builder.toString();
 	}
 
 	public String mirrorEnds(String string) {
@@ -155,7 +144,7 @@ public class StringThree {
 	public int maxBlock(String str) {
 		int currentBlock = 1;
 		int largestBlock = 1;
-		if (str.length() == 0) {
+		if (str.isEmpty()) {
 			return 0;
 		}
 		for (int i = 0; i < str.length() - 1; i++) {
@@ -207,7 +196,7 @@ public class StringThree {
 
 	public static void main(String[] args) {
 		StringThree st = new StringThree();
-		System.out.println(st.notReplace("is"));
+		System.out.println(st.sameEnds("xxx"));
 	}
 
 }
